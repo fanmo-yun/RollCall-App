@@ -1,9 +1,9 @@
-from time import sleep
-import tkinter as tk
-from tkinter import messagebox
 import os
 import random
 import threading
+import tkinter as tk
+from tkinter import messagebox
+from time import sleep
 
 user_name = []
 is_call = False
