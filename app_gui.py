@@ -1,5 +1,10 @@
+import sys
+import csv
+import time
 import random
+import threading
 import tkinter as tk
+from openpyxl import load_workbook
 from tkinter import messagebox
 from tkinter import filedialog
 
@@ -26,6 +31,8 @@ class RollCall_App(tk.Tk):
         self.geometry(f"{appWidth}x{appHeight}+{posWidth}+{posHeight}")
         self.resizable(width=IsResizable, height=IsResizable)
 
+        self.delay = 0.04
+        self.isRandom = False
         self.rollval = tk.StringVar()
         self.appList = list()
     
@@ -58,26 +65,44 @@ class RollCall_App(tk.Tk):
         self.Btn1 = tk.Button(self, width=10, height=2, text="随机点名", command=self.random_one)
         self.Btn1.pack(side=tk.LEFT, padx=40, pady=10)
 
-        self.Btn2 = tk.Button(self, width=10, height=2, text="动态点名", command=None)
+        self.Btn2 = tk.Button(self, width=10, height=2, text="动态点名", command=self.random_more)
         self.Btn2.pack(side=tk.LEFT, pady=10)
     
     def get_file(self, extension: str) -> str:
         return filedialog.askopenfilename(defaultextension=extension, filetypes=[("Text Files", "*" + extension)])
 
     def process_txt(self):
-        filename = self.get_file(".txt")
-        if (len(filename) != 0):
-            with open(filename, "r", encoding="utf-8") as fp:
-                for name in fp.readlines():
-                    if (len(name.strip()) != 0):
-                        self.appList.append(name.strip())
-        messagebox.showinfo(title=self.appName, message="添加成功")
+        try:
+            filename = self.get_file(".txt")
+            if (len(filename) != 0):
+                with open(filename, "r", encoding="utf-8") as fp:
+                    for name in fp.readlines():
+                        if (len(name.strip()) != 0):
+                            self.appList.append(name.strip())
+            messagebox.showinfo(title=self.appName, message="添加成功")
+        except:
+            messagebox.showerror(title=self.appName, message="txt文件出现错误")
     
     def process_xlsx(self):
-        pass
+        try:
+            filename = self.get_file(".xlsx")
+            load_workbook(filename)
+            messagebox.showinfo(title=self.appName, message="添加成功")
+        except:
+            messagebox.showerror(title=self.appName, message="xlsx文件出现错误")
 
     def process_csv(self):
-        pass
+        try:
+            filename = self.get_file(".csv")
+            if (len(filename) != 0):
+                with open(filename, "r", encoding="utf-8", newline="") as fp:
+                    csv_content = csv.reader(fp, delimiter=',')
+                    for name in csv_content:
+                        if (len(name.strip()) != 0):
+                            self.appList.append(name.strip())
+            messagebox.showinfo(title=self.appName, message="添加成功")
+        except:
+            messagebox.showerror(title=self.appName, message="csv文件出现错误")
 
     def empty_list(self):
         if len(self.appList) != 0:
@@ -86,21 +111,41 @@ class RollCall_App(tk.Tk):
             messagebox.showinfo(title=self.appName, message="已清除")
         else:
             messagebox.showinfo(title=self.appName, message="列表为空")
+        
+    def choice_more(self):
+        while (self.isRandom):
+            self.rollval.set(random.choice(self.appList))
+            time.sleep(self.delay)
     
     def random_one(self):
-        if (len(self.appList) != 0):
+        if (len(self.appList) != 0 and self.isRandom == False):
             self.rollval.set(random.choice(self.appList))
+        elif (len(self.appList) != 0 and self.isRandom == True):
+            pass
         else:
             messagebox.showwarning(title=self.appName, message="列表为空")
     
     def random_more(self):
-        pass
+        if (len(self.appList) != 0):
+            if (self.isRandom == False):
+                self.isRandom = True
+                self.appThread1 = threading.Thread(target=self.choice_more)
+                self.appThread1.start()
+            else:
+                self.isRandom = False
+        else:
+            messagebox.showwarning(title=self.appName, message="列表为空")
+
+    def destroy_self(self):
+        self.isRandom = False
+        sys.exit(0)
     
     def run(self):
+        self.menu_layout()
+        self.main_layout()
+        self.protocol("WM_DELETE_WINDOW", self.destroy_self)
         self.mainloop()
 
 if __name__ == "__main__":
     app = RollCall_App(appName="RollCall", appWidth=280, appHeight=130, IsResizable=False)
-    app.menu_layout()
-    app.main_layout()
     app.run()
