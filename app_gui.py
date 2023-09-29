@@ -4,7 +4,6 @@ import time
 import random
 import threading
 import tkinter as tk
-from openpyxl import load_workbook
 from tkinter import messagebox
 from tkinter import filedialog
 
@@ -41,18 +40,11 @@ class RollCall_App(tk.Tk):
         
         self.fileMenu = tk.Menu(self.appMenu, tearoff=0)
         self.fileMenu.add_command(label="导入txt", command=self.process_txt)
-        self.fileMenu.add_command(label="导入xlsx", command=None)
-        self.fileMenu.add_command(label="导入csv", command=None)
+        self.fileMenu.add_command(label="导入csv", command=self.process_csv)
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label="清空列表", command=self.empty_list)
         self.appMenu.add_cascade(label="文件", menu=self.fileMenu)
-
-        self.settingMenu = tk.Menu(self.appMenu, tearoff=0)
-        self.settingMenu.add_command(label="设置文字", command=None)
-        self.settingMenu.add_command(label="设置颜色", command=None)
-        self.settingMenu.add_command(label="设置延迟", command=None)
-        self.appMenu.add_cascade(label="设置", menu=self.settingMenu)
-
+        
         self.config(menu=self.appMenu)
 
     def main_layout(self):
@@ -79,17 +71,9 @@ class RollCall_App(tk.Tk):
                     for name in fp.readlines():
                         if (len(name.strip()) != 0):
                             self.appList.append(name.strip())
-            messagebox.showinfo(title=self.appName, message="添加成功")
+                messagebox.showinfo(title=self.appName, message="添加成功")
         except:
-            messagebox.showerror(title=self.appName, message="txt文件出现错误")
-    
-    def process_xlsx(self):
-        try:
-            filename = self.get_file(".xlsx")
-            load_workbook(filename)
-            messagebox.showinfo(title=self.appName, message="添加成功")
-        except:
-            messagebox.showerror(title=self.appName, message="xlsx文件出现错误")
+            messagebox.showerror(title=self.appName, message="txt文件导入出现错误")
 
     def process_csv(self):
         try:
@@ -97,12 +81,13 @@ class RollCall_App(tk.Tk):
             if (len(filename) != 0):
                 with open(filename, "r", encoding="utf-8", newline="") as fp:
                     csv_content = csv.reader(fp, delimiter=',')
-                    for name in csv_content:
-                        if (len(name.strip()) != 0):
-                            self.appList.append(name.strip())
-            messagebox.showinfo(title=self.appName, message="添加成功")
+                    for names in csv_content:
+                        for name in names:
+                            if (len(name.strip()) != 0):
+                                self.appList.append(name.strip())
+                messagebox.showinfo(title=self.appName, message="添加成功")
         except:
-            messagebox.showerror(title=self.appName, message="csv文件出现错误")
+            messagebox.showerror(title=self.appName, message="csv文件导入出现错误")
 
     def empty_list(self):
         if len(self.appList) != 0:
@@ -145,7 +130,3 @@ class RollCall_App(tk.Tk):
         self.main_layout()
         self.protocol("WM_DELETE_WINDOW", self.destroy_self)
         self.mainloop()
-
-if __name__ == "__main__":
-    app = RollCall_App(appName="RollCall", appWidth=280, appHeight=130, IsResizable=False)
-    app.run()
