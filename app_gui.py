@@ -45,6 +45,22 @@ class RollCall_App(tk.Tk):
     def set_delay(self, set_delay_num: float):
         self.delay = set_delay_num
     
+    def set_bgcolor(self, color: str):
+        self.showLabel.configure(background=color)
+        self.update()
+    
+    def set_font(self, fontname: str, fontcolor: str):
+        self.showLabel.configure(font=fontname, fg=fontcolor)
+        self.update()
+    
+    def set_font2(self, fontname: str):
+        self.showLabel.configure(font=fontname)
+        self.update()
+    
+    def set_font3(self, fontcolor: str):
+        self.showLabel.config(fg=fontcolor)
+        self.update()
+    
     def menu_layout(self):
         self.appMenu = tk.Menu(self)
         
@@ -58,7 +74,7 @@ class RollCall_App(tk.Tk):
         self.settingmenu = tk.Menu(self.appMenu, tearoff=0)
         self.settingmenu.add_command(label="设置延迟", command=self.setting_delay)
         self.settingmenu.add_command(label="设置字体", command=self.setting_font)
-        self.settingmenu.add_command(label="清空背景", command=self.setting_background)
+        self.settingmenu.add_command(label="设置背景", command=self.setting_background)
         self.appMenu.add_cascade(label="设置", menu=self.settingmenu)
         
         self.config(menu=self.appMenu)
@@ -67,7 +83,7 @@ class RollCall_App(tk.Tk):
         self.appframe = tk.Frame(self)
         self.appframe.pack()
 
-        self.showLabel = tk.Label(master=self.appframe, width=22, height=3, font=20, background="yellow", textvariable=self.rollval)
+        self.showLabel = tk.Label(master=self.appframe, width=22, height=3, background="yellow", textvariable=self.rollval)
         self.showLabel.pack(side=tk.TOP)
 
         self.Btn1 = tk.Button(self, width=10, height=2, text="随机点名", command=self.random_one)
@@ -141,14 +157,14 @@ class RollCall_App(tk.Tk):
         if (self.isRandom == False):
             self.isRandom = True
         self.freeze_win()
-        self.setting_font_win = setting_font_win(appName="设置字体", appWidth=220, appHeight=170, IsResizable=False)
+        self.setting_font_win = setting_font_win(appName="设置字体", appWidth=350, appHeight=250, IsResizable=False, set_font=self.set_font, set_font2=self.set_font2, set_font3=self.set_font3, signal=self.release_win)
         self.setting_font_win.run()
 
     def setting_background(self):
         if (self.isRandom == False):
             self.isRandom = True
         self.freeze_win()
-        self.setting_background_win = setting_background_win(appName="设置背景", appWidth=220, appHeight=70, IsResizable=False, set_color=None)
+        self.setting_background_win = setting_background_win(appName="设置背景", appWidth=220, appHeight=70, IsResizable=False, set_color=self.set_bgcolor, signal=self.release_win)
         self.setting_background_win.run()
 
     def setting_delay(self):
