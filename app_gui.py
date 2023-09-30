@@ -4,6 +4,7 @@ import time
 import random
 import threading
 import tkinter as tk
+from app_topgui import *
 from tkinter import messagebox
 from tkinter import filedialog
 
@@ -35,6 +36,15 @@ class RollCall_App(tk.Tk):
         self.rollval = tk.StringVar()
         self.appList = list()
     
+    def freeze_win(self):
+        self.attributes("-disabled", True)
+    
+    def release_win(self):
+        self.attributes("-disabled", False)
+    
+    def set_delay(self, set_delay_num: float):
+        self.delay = set_delay_num
+    
     def menu_layout(self):
         self.appMenu = tk.Menu(self)
         
@@ -44,6 +54,12 @@ class RollCall_App(tk.Tk):
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label="清空列表", command=self.empty_list)
         self.appMenu.add_cascade(label="文件", menu=self.fileMenu)
+
+        self.settingmenu = tk.Menu(self.appMenu, tearoff=0)
+        self.settingmenu.add_command(label="设置延迟", command=self.setting_delay)
+        self.settingmenu.add_command(label="设置字体", command=self.setting_font)
+        self.settingmenu.add_command(label="清空背景", command=self.setting_background)
+        self.appMenu.add_cascade(label="设置", menu=self.settingmenu)
         
         self.config(menu=self.appMenu)
 
@@ -120,6 +136,27 @@ class RollCall_App(tk.Tk):
                 self.isRandom = False
         else:
             messagebox.showwarning(title=self.appName, message="列表为空")
+
+    def setting_font(self):
+        if (self.isRandom == False):
+            self.isRandom = True
+        self.freeze_win()
+        self.setting_font_win = setting_font_win(appName="设置字体", appWidth=220, appHeight=170, IsResizable=False)
+        self.setting_font_win.run()
+
+    def setting_background(self):
+        if (self.isRandom == False):
+            self.isRandom = True
+        self.freeze_win()
+        self.setting_background_win = setting_background_win(appName="设置背景", appWidth=220, appHeight=70, IsResizable=False, set_color=None)
+        self.setting_background_win.run()
+
+    def setting_delay(self):
+        if (self.isRandom == False):
+            self.isRandom = True
+        self.freeze_win()
+        self.setting_delay_win = setting_delay_win(appName="设置延迟", appWidth=220, appHeight=100, IsResizable=False, master_time=self.set_delay, signal=self.release_win)
+        self.setting_delay_win.run()
 
     def destroy_self(self):
         self.isRandom = False
