@@ -5,8 +5,7 @@ import random
 import threading
 import tkinter as tk
 from app_topgui import *
-from tkinter import messagebox
-from tkinter import filedialog
+from tkinter import messagebox, filedialog, font
 
 class RollCall_App(tk.Tk):
     def __init__(self,
@@ -30,7 +29,7 @@ class RollCall_App(tk.Tk):
         self.title(self.appName)
         self.geometry(f"{appWidth}x{appHeight}+{posWidth}+{posHeight}")
         self.resizable(width=IsResizable, height=IsResizable)
-
+        
         self.delay = 0.04
         self.isRandom = False
         self.rollval = tk.StringVar()
@@ -47,19 +46,15 @@ class RollCall_App(tk.Tk):
     
     def set_bgcolor(self, color: str):
         self.showLabel.configure(background=color)
-        self.update()
     
     def set_font(self, fontname: str, fontcolor: str):
         self.showLabel.configure(font=fontname, fg=fontcolor)
-        self.update()
     
     def set_font2(self, fontname: str):
         self.showLabel.configure(font=fontname)
-        self.update()
     
     def set_font3(self, fontcolor: str):
         self.showLabel.config(fg=fontcolor)
-        self.update()
     
     def menu_layout(self):
         self.appMenu = tk.Menu(self)
@@ -86,10 +81,10 @@ class RollCall_App(tk.Tk):
         self.showLabel = tk.Label(master=self.appframe, width=22, height=3, background="yellow", textvariable=self.rollval)
         self.showLabel.pack(side=tk.TOP)
 
-        self.Btn1 = tk.Button(self, width=10, height=2, text="随机点名", command=self.random_one)
-        self.Btn1.pack(side=tk.LEFT, padx=40, pady=10)
+        self.Btn1 = tk.Button(self, width=12, height=2, text="随机点名", command=self.random_one)
+        self.Btn1.pack(side=tk.LEFT, padx=32, pady=10)
 
-        self.Btn2 = tk.Button(self, width=10, height=2, text="动态点名", command=self.random_more)
+        self.Btn2 = tk.Button(self, width=12, height=2, text="动态点名", command=self.random_more)
         self.Btn2.pack(side=tk.LEFT, pady=10)
     
     def get_file(self, extension: str) -> str:
