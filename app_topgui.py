@@ -1,5 +1,4 @@
 import tkinter as tk
-import tkinter.ttk as ttk
 from tkinter import font
 from tkinter import messagebox
 from tkinter.colorchooser import askcolor

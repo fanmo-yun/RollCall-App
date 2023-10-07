@@ -5,7 +5,7 @@ import random
 import threading
 import tkinter as tk
 from app_topgui import *
-from tkinter import messagebox, filedialog, font
+from tkinter import messagebox, filedialog
 
 class RollCall_App(tk.Tk):
     def __init__(self,
